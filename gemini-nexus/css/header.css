@@ -1,0 +1,31 @@
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 20px;
+    height: auto; 
+    background: transparent;
+    z-index: 10;
+    box-sizing: border-box;
+    pointer-events: none; /* Let clicks pass through empty space */
+}
+
+.header .icon-btn {
+    width: 33px;
+    height: 33px;
+}
+
+.header .icon-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.header-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #444746;
+}

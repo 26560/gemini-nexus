@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Nexus",
+  "version": "6.0",
+  "permissions": ["sidePanel", "storage", "contextMenus"],
+  "host_permissions": [
+    "https://gemini.google.com/*",
+    "https://bard.google.com/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "logo.png",
+    "32": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "action": {
+    "default_title": "Open Gemini Chat",
+    "default_icon": "logo.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P",
+        "mac": "Command+Shift+P"
+      },
+      "description": "Open Gemini Nexus"
+    }
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "sandbox": {
+    "pages": ["sandbox.html"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "content_overlay.js", 
+        "content_observer.js", 
+        "content_toolbar_icons.js",
+        "content_toolbar_styles_core.js",
+        "content_toolbar_styles_widget.js",
+        "content_toolbar_styles_panel.js",
+        "content_toolbar_styles_markdown.js",
+        "content_toolbar_styles.js",
+        "content_toolbar_markdown.js",
+        "content_toolbar_drag.js",
+        "content_toolbar_templates.js",
+        "content_toolbar_view_utils.js",
+        "content_toolbar_view_widget.js",
+        "content_toolbar_view_window.js",
+        "content_toolbar_view.js",
+        "content_toolbar_ui.js", 
+        "content_toolbar_actions.js", 
+        "content_toolbar.js", 
+        "content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net"
+  }
+}

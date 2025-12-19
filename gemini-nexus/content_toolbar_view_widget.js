@@ -1,0 +1,46 @@
+
+// content_toolbar_view_widget.js
+(function() {
+    const Utils = window.GeminiViewUtils;
+
+    /**
+     * Sub-controller for Floating Toolbar and Image Button
+     */
+    class WidgetView {
+        constructor(elements) {
+            this.elements = elements;
+        }
+
+        showToolbar(rect) {
+            if (!this.elements.toolbar) return;
+            // Toolbar is never pinned, pass false
+            Utils.positionElement(this.elements.toolbar, rect, false, false);
+            this.elements.toolbar.classList.add('visible');
+        }
+
+        hideToolbar() {
+            if (this.elements.toolbar) this.elements.toolbar.classList.remove('visible');
+        }
+
+        showImageButton(rect) {
+            if (!this.elements.imageBtn) return;
+            const scrollX = window.scrollX || window.pageXOffset;
+            const scrollY = window.scrollY || window.pageYOffset;
+            const left = rect.right + scrollX - 46; 
+            const top = rect.top + scrollY + 10; 
+            
+            Object.assign(this.elements.imageBtn.style, { left: `${left}px`, top: `${top}px` });
+            this.elements.imageBtn.classList.add('visible');
+        }
+
+        hideImageButton() {
+            if (this.elements.imageBtn) this.elements.imageBtn.classList.remove('visible');
+        }
+
+        isToolbarVisible() {
+            return (this.elements.toolbar && this.elements.toolbar.classList.contains('visible'));
+        }
+    }
+
+    window.GeminiViewWidget = WidgetView;
+})();
