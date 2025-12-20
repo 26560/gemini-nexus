@@ -1,61 +1,23 @@
 
 // sandbox/render/content.js
+import { MathHandler } from './math_utils.js';
 
 // Helper: Render Markdown/Math/Text into an element
 export function renderContent(contentDiv, text, role) {
     // Render Markdown and Math for AI responses
+    // Check if marked is loaded (it might be lazy loading)
     if (role === 'ai' && typeof marked !== 'undefined') {
         
-        // --- Math Protection & Normalization ---
-        const mathBlocks = [];
+        const mathHandler = new MathHandler();
         
-        const protectMath = (regex, isDisplay) => {
-            text = text.replace(regex, (match, content) => {
-                const id = `@@MATH_BLOCK_${mathBlocks.length}@@`;
-                mathBlocks.push({
-                    id,
-                    content: content,
-                    isDisplay
-                });
-                return id;
-            });
-        };
-
-        // 1. Block Math: \$\$ ... \$\$ (Gemini specific)
-        protectMath(/\\\$\$([\s\S]+?)\\\$\$/g, true);
-        
-        // 2. Block Math: $$ ... $$
-        protectMath(/\$\$([\s\S]+?)\$\$/g, true);
-
-        // 3. Block Math: \[ ... \]
-        protectMath(/\\\[([\s\S]+?)\\\]/g, true);
-
-        // 4. Inline Math: \$ ... \$ (Gemini specific)
-        protectMath(/\\\$([^$]+?)\\\$/g, false);
-
-        // 5. Inline Math: \( ... \)
-        protectMath(/\\\(([\s\S]+?)\\\)/g, false);
-
-        // 6. Inline Math: $ ... $ (Standard LaTeX)
-        protectMath(/(?<!\\)\$([^$\n]+?)(?<!\\)\$/g, false);
+        // --- Math Protection ---
+        let processedText = mathHandler.protect(text);
 
         // --- Markdown Parsing ---
-        let html = marked.parse(text);
+        let html = marked.parse(processedText);
         
         // --- Restore Math ---
-        mathBlocks.forEach(({ id, content, isDisplay }) => {
-            // Escape HTML chars inside latex to prevent browser parsing issues
-            const safeContent = content
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-            
-            // Use standard delimiters for KaTeX
-            const open = isDisplay ? '$$' : '$';
-            const close = isDisplay ? '$$' : '$';
-            
-            html = html.replace(id, `${open}${safeContent}${close}`);
-        });
+        html = mathHandler.restore(html);
 
         contentDiv.innerHTML = html;
         
@@ -72,7 +34,7 @@ export function renderContent(contentDiv, text, role) {
             });
         }
     } else {
-        // User message: keep as plain text (CSS handles whitespace)
+        // User message OR fallback if marked not loaded yet
         contentDiv.innerText = text;
     }
 }

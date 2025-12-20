@@ -1,7 +1,6 @@
-
 // sandbox/ui/settings.js
-import { saveShortcutsToStorage, requestShortcutsFromStorage, saveThemeToStorage, requestThemeFromStorage } from '../../lib/messaging.js';
-import { SETTINGS_TEMPLATE } from './templates/settings.js';
+import { saveShortcutsToStorage, saveThemeToStorage, requestThemeFromStorage, saveLanguageToStorage, requestLanguageFromStorage } from '../../lib/messaging.js';
+import { setLanguagePreference, getLanguagePreference } from '../core/i18n.js';
 
 export class SettingsController {
     constructor(callbacks) {
@@ -13,19 +12,13 @@ export class SettingsController {
         };
         this.defaultShortcuts = { ...this.shortcuts };
 
-        this.render();
         this.queryElements();
         this.initListeners();
         
         // Initial Fetch
-        requestShortcutsFromStorage();
+        // Shortcuts are restored via UI_READY handshake, manual fetch is not handled by bridge
         requestThemeFromStorage();
-    }
-
-    render() {
-        if (!document.getElementById('settings-modal')) {
-            document.body.insertAdjacentHTML('beforeend', SETTINGS_TEMPLATE);
-        }
+        requestLanguageFromStorage();
     }
 
     queryElements() {
@@ -33,6 +26,7 @@ export class SettingsController {
         this.btnOpen = document.getElementById('settings-btn'); // External trigger
         this.btnClose = document.getElementById('close-settings');
         this.themeSelect = document.getElementById('theme-select');
+        this.languageSelect = document.getElementById('language-select');
         this.inputQuickAsk = document.getElementById('shortcut-quick-ask');
         this.inputOpenPanel = document.getElementById('shortcut-open-panel');
         this.btnSave = document.getElementById('save-shortcuts');
@@ -64,6 +58,24 @@ export class SettingsController {
         if (this.themeSelect) {
             this.themeSelect.addEventListener('change', (e) => {
                 this.setTheme(e.target.value);
+            });
+        }
+        
+        // System Theme Listener (Real-time update)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+             if (this.themeSelect && this.themeSelect.value === 'system') {
+                 this._applyVisualTheme('system');
+             }
+        });
+
+        // Language
+        if (this.languageSelect) {
+            this.languageSelect.addEventListener('change', (e) => {
+                const newLang = e.target.value;
+                setLanguagePreference(newLang);
+                saveLanguageToStorage(newLang);
+                // Dispatch event to update UI immediately
+                document.dispatchEvent(new CustomEvent('gemini-language-changed'));
             });
         }
 
@@ -102,6 +114,7 @@ export class SettingsController {
             // Sync inputs
             if(this.inputQuickAsk) this.inputQuickAsk.value = this.shortcuts.quickAsk;
             if(this.inputOpenPanel) this.inputOpenPanel.value = this.shortcuts.openPanel;
+            if(this.languageSelect) this.languageSelect.value = getLanguagePreference();
         }
     }
 
@@ -112,13 +125,28 @@ export class SettingsController {
     }
 
     setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
+        this._applyVisualTheme(theme);
         saveThemeToStorage(theme);
     }
     
     updateTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
+        this._applyVisualTheme(theme);
         if(this.themeSelect) this.themeSelect.value = theme;
+    }
+    
+    _applyVisualTheme(theme) {
+        let applied = theme;
+        if (theme === 'system') {
+             applied = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', applied);
+    }
+    
+    updateLanguage(lang) {
+        setLanguagePreference(lang);
+        if(this.languageSelect) this.languageSelect.value = lang;
+        // Trigger UI update from controller
+        document.dispatchEvent(new CustomEvent('gemini-language-changed'));
     }
 
     updateShortcuts(payload) {

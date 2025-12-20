@@ -101,6 +101,27 @@
                 el.style.left = `${visualLeft}px`;
                 el.style.top = `${visualTop}px`;
             }
+        },
+
+        resizeSelect: function(select) {
+            if (!select) return;
+            const span = document.createElement('span');
+            span.style.visibility = 'hidden';
+            span.style.position = 'absolute';
+            span.style.fontSize = '13px'; // Match CSS
+            span.style.fontWeight = '500'; // Match CSS
+            span.style.fontFamily = window.getComputedStyle(select).fontFamily;
+            span.style.whiteSpace = 'nowrap';
+            span.textContent = select.options[select.selectedIndex].text;
+            
+            if (select.parentNode) {
+                select.parentNode.appendChild(span);
+                const width = span.getBoundingClientRect().width;
+                select.parentNode.removeChild(span);
+                
+                // Add padding (12px * 2 = 24px) + slight buffer
+                select.style.width = `${width + 26}px`;
+            }
         }
     };
 })();

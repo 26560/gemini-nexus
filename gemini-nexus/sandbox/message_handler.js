@@ -1,7 +1,8 @@
 
 // sandbox/message_handler.js
-import { appendMessage } from './renderer.js';
+import { appendMessage } from './render/message.js';
 import { cropImage } from '../lib/crop_utils.js';
+import { t } from './core/i18n.js';
 
 export class MessageHandler {
     constructor(sessionManager, uiController, imageManager, appController) {
@@ -40,7 +41,7 @@ export class MessageHandler {
         // 4. Mode Sync (from Context Menu)
         if (request.action === "SET_SIDEBAR_CAPTURE_MODE") {
             this.app.setCaptureMode(request.mode);
-            this.ui.updateStatus(request.mode === 'ocr' ? "Select area for OCR..." : "Select area to capture...");
+            this.ui.updateStatus(request.mode === 'ocr' ? t('selectOcr') : t('selectSnip'));
             return;
         }
 
@@ -63,8 +64,10 @@ export class MessageHandler {
             this.streamingBubble = appendMessage(this.ui.historyDiv, "", 'ai');
         }
         
-        // Update content
-        this.streamingBubble.update(request.text);
+        // Update content if text exists
+        if (request.text !== undefined) {
+             this.streamingBubble.update(request.text);
+        }
         
         // Ensure UI state reflects generation
         if (!this.app.isGenerating) {
@@ -88,8 +91,10 @@ export class MessageHandler {
 
             // Update UI
             if (this.streamingBubble) {
-                // Finalize the streaming bubble
-                this.streamingBubble.update(request.text);
+                // Finalize the streaming bubble with complete text
+                if (request.text) {
+                     this.streamingBubble.update(request.text);
+                }
                 
                 if (request.status !== 'success') {
                     // Optionally style error? For now text update is enough.
@@ -109,7 +114,7 @@ export class MessageHandler {
         this.ui.updateStatus("");
         if (request.error) {
             console.error("Image fetch failed", request.error);
-            this.ui.updateStatus("Failed to load image.");
+            this.ui.updateStatus(t('failedLoadImage'));
             setTimeout(() => this.ui.updateStatus(""), 3000);
         } else {
             this.imageManager.setImage(request.base64, request.type, request.name);
@@ -117,14 +122,14 @@ export class MessageHandler {
     }
 
     async handleCropResult(request) {
-        this.ui.updateStatus("Processing image...");
+        this.ui.updateStatus(t('processingImage'));
         try {
             const croppedBase64 = await cropImage(request.image, request.area);
             this.imageManager.setImage(croppedBase64, 'image/png', 'snip.png');
             
             if (this.app.captureMode === 'ocr') {
-                // Change prompt to strict OCR instructions
-                this.ui.inputFn.value = "请识别并提取这张图片中的文字 (OCR)。仅输出识别到的文本内容，不需要任何解释。";
+                // Change prompt to localized OCR instructions
+                this.ui.inputFn.value = t('ocrPrompt');
                 // Auto-send via the main controller
                 this.app.handleSendMessage(); 
             } else {
@@ -133,7 +138,7 @@ export class MessageHandler {
             }
         } catch (e) {
             console.error("Crop error", e);
-            this.ui.updateStatus("Error processing screenshot.");
+            this.ui.updateStatus(t('errorScreenshot'));
         }
     }
     
@@ -147,7 +152,7 @@ export class MessageHandler {
              // Trigger resize
              input.dispatchEvent(new Event('input'));
         } else {
-             this.ui.updateStatus("No text selected on page.");
+             this.ui.updateStatus(t('noTextSelected'));
              setTimeout(() => this.ui.updateStatus(""), 2000);
         }
     }

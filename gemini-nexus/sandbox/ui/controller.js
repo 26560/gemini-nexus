@@ -25,6 +25,7 @@ export class UIController {
         this.inputFn = this.chat.inputFn;
         this.historyDiv = this.chat.historyDiv;
         this.sendBtn = this.chat.sendBtn;
+        this.modelSelect = elements.modelSelect;
     }
 
     // --- Delegation Methods ---
@@ -46,4 +47,5 @@ export class UIController {
     // Settings
     updateShortcuts(payload) { this.settings.updateShortcuts(payload); }
     updateTheme(theme) { this.settings.updateTheme(theme); }
+    updateLanguage(lang) { this.settings.updateLanguage(lang); }
 }

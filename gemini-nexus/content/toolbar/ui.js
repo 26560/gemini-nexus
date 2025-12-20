@@ -7,6 +7,10 @@
     const View = window.GeminiToolbarView;
     const DragController = window.GeminiDragController;
     const Events = window.GeminiToolbarEvents;
+    
+    // Localization helper
+    const isZh = navigator.language.startsWith('zh');
+    const DEFAULT_TITLE = isZh ? "询问" : "Ask";
 
     /**
      * Main UI Controller
@@ -163,7 +167,7 @@
             this.view.hideImageButton();
         }
 
-        showAskWindow(rect, contextText, title = "询问") {
+        showAskWindow(rect, contextText, title = DEFAULT_TITLE) {
             return this.view.showAskWindow(rect, contextText, title, () => this.dragController.reset());
         }
 
@@ -191,6 +195,18 @@
 
         setInputValue(text) {
             this.view.setInputValue(text);
+        }
+
+        // --- Model Selection ---
+
+        getSelectedModel() {
+            return this.view ? this.view.getSelectedModel() : "gemini-2.5-flash";
+        }
+
+        setSelectedModel(model) {
+            if (this.view) {
+                this.view.setSelectedModel(model);
+            }
         }
 
         setGrammarMode(enabled, sourceElement = null, selectionRange = null) {

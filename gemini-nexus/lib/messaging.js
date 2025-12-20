@@ -1,5 +1,3 @@
-
-
 // messaging.js
 
 export function sendToBackground(payload) {
@@ -14,14 +12,6 @@ export function saveSessionsToStorage(sessions) {
         action: 'SAVE_SESSIONS',
         payload: sessions
     }, '*');
-}
-
-export function requestSessionsFromStorage() {
-    window.parent.postMessage({ action: 'GET_SESSIONS' }, '*');
-}
-
-export function requestShortcutsFromStorage() {
-    window.parent.postMessage({ action: 'GET_SHORTCUTS' }, '*');
 }
 
 export function saveShortcutsToStorage(shortcuts) {
@@ -42,13 +32,13 @@ export function saveThemeToStorage(theme) {
     }, '*');
 }
 
-export function requestModelFromStorage() {
-    window.parent.postMessage({ action: 'GET_MODEL' }, '*');
+export function requestLanguageFromStorage() {
+    window.parent.postMessage({ action: 'GET_LANGUAGE' }, '*');
 }
 
-export function saveModelToStorage(model) {
+export function saveLanguageToStorage(lang) {
     window.parent.postMessage({
-        action: 'SAVE_MODEL',
-        payload: model
+        action: 'SAVE_LANGUAGE',
+        payload: lang
     }, '*');
 }

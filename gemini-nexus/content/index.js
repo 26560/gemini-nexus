@@ -1,6 +1,7 @@
 
-// content.js v2.0.0 -> content/index.js
-console.log("%c Gemini Nexus v2.0.0 Ready ", "background: #333; color: #00ff00; font-size: 16px");
+
+// content.js v3.0.0 -> content/index.js
+console.log("%c Gemini Nexus v3.0.0 Ready ", "background: #333; color: #00ff00; font-size: 16px");
 
 // Initialize Helpers
 // (Classes are loaded into window scope by previous content scripts in manifest)

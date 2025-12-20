@@ -1,5 +1,6 @@
 
 // ui_sidebar.js -> sandbox/ui/sidebar.js
+import { t } from '../core/i18n.js';
 
 export class SidebarController {
     constructor(elements, callbacks) {
@@ -58,13 +59,10 @@ export class SidebarController {
         if (this.overlay) this.overlay.classList.remove('visible');
     }
 
-    handleSearch(query) {
-        if (!this.allSessions) return;
-
-        let displayList = this.allSessions;
-
-        // Lazy Init Fuse if it arrived late (async)
-        if (!this.fuse && window.Fuse) {
+    _initSearch() {
+        if (this.fuse) return;
+        
+        if (window.Fuse && this.allSessions && this.allSessions.length > 0) {
              this.fuse = new window.Fuse(this.allSessions, {
                 keys: [
                     { name: 'title', weight: 0.7 },
@@ -74,6 +72,15 @@ export class SidebarController {
                 ignoreLocation: true
             });
         }
+    }
+
+    handleSearch(query) {
+        if (!this.allSessions) return;
+
+        let displayList = this.allSessions;
+
+        // Lazy Init Fuse
+        this._initSearch();
 
         if (query.trim() && this.fuse) {
             const results = this.fuse.search(query);
@@ -90,22 +97,10 @@ export class SidebarController {
         this.allSessions = sessions;
         this.currentSessionId = currentId;
         this.itemCallbacks = itemCallbacks;
-
-        // Initialize Fuse if available
-        if (window.Fuse) {
-            this.fuse = new window.Fuse(this.allSessions, {
-                keys: [
-                    { name: 'title', weight: 0.7 },
-                    { name: 'messages.text', weight: 0.3 }
-                ],
-                threshold: 0.4,
-                ignoreLocation: true
-            });
-        } else {
-            // Fuse not yet loaded, clear it so handleSearch can init it later
-            this.fuse = null;
-        }
-
+        
+        // Reset Fuse index as data changed
+        this.fuse = null;
+        
         // Check if there is an active search query
         const currentQuery = this.searchInput ? this.searchInput.value : '';
         if (currentQuery.trim()) {
@@ -124,7 +119,7 @@ export class SidebarController {
             emptyEl.style.textAlign = 'center';
             emptyEl.style.color = 'var(--text-tertiary)';
             emptyEl.style.fontSize = '13px';
-            emptyEl.textContent = 'No conversations found.';
+            emptyEl.textContent = t('noConversations');
             this.listEl.appendChild(emptyEl);
             return;
         }
@@ -148,10 +143,10 @@ export class SidebarController {
             const delBtn = document.createElement('span');
             delBtn.className = 'history-delete';
             delBtn.textContent = '✕';
-            delBtn.title = "Delete";
+            delBtn.title = t('delete');
             delBtn.onclick = (e) => {
                 e.stopPropagation();
-                if(confirm("Delete this chat?")) {
+                if(confirm(t('deleteChatConfirm'))) {
                     this.itemCallbacks.onDelete(s.id);
                 }
             };

@@ -114,7 +114,37 @@
 
         .header-actions {
             display: flex;
+            align-items: center;
             gap: 8px;
+        }
+
+        /* Model Selector in Header */
+        .ask-model-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: #f0f4f9;
+            border: 1px solid transparent;
+            border-radius: 18px; /* Pill shape */
+            padding: 0 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #444746;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            height: 32px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .ask-model-select:hover {
+            background: #e9eef6;
+            color: #1f1f1f;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .ask-model-select option {
+            background: #ffffff;
+            color: #1f1f1f;
         }
 
         .icon-btn {

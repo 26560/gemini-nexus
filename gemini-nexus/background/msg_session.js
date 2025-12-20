@@ -13,10 +13,11 @@ export class SessionMessageHandler {
         if (request.action === "SEND_PROMPT") {
             (async () => {
                 const onUpdate = (partialText) => {
+                    // Catch errors if receiver (UI) is closed/unavailable
                     chrome.runtime.sendMessage({
                         action: "GEMINI_STREAM_UPDATE",
                         text: partialText
-                    });
+                    }).catch(() => {}); 
                 };
 
                 try {
@@ -128,15 +129,20 @@ export class SessionMessageHandler {
     async _handleQuickAsk(request, sender) {
         const tabId = sender.tab ? sender.tab.id : null;
         
-        // Ensure Quick Ask starts with a fresh context
-        await this.sessionManager.resetContext();
+        // Ensure Quick Ask starts with a fresh context ONLY if it's a new conversation
+        if (!request.sessionId) {
+            await this.sessionManager.resetContext();
+        } else {
+            // Continuation of existing session - just ensure initialized
+            await this.sessionManager.ensureInitialized();
+        }
 
         const onUpdate = (partialText) => {
             if (tabId) {
                 chrome.tabs.sendMessage(tabId, {
                     action: "GEMINI_STREAM_UPDATE",
                     text: partialText
-                });
+                }).catch(() => {});
             }
         };
 
@@ -189,7 +195,7 @@ export class SessionMessageHandler {
                 chrome.tabs.sendMessage(tabId, {
                     action: "GEMINI_STREAM_UPDATE",
                     text: partialText
-                });
+                }).catch(() => {});
             }
         };
 

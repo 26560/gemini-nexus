@@ -119,4 +119,12 @@ body {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
 * { box-sizing: border-box; }

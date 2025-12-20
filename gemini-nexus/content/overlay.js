@@ -41,7 +41,11 @@ class SelectionOverlay {
         `;
 
         this.hint = document.createElement('div');
-        this.hint.textContent = "Drag to capture area / Esc to cancel";
+        
+        // Localization
+        const isZh = navigator.language.startsWith('zh');
+        this.hint.textContent = isZh ? "拖拽框选区域 / 按 Esc 取消" : "Drag to capture area / Esc to cancel";
+        
         this.hint.style.cssText = `
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             color: white; background: rgba(0, 0, 0, 0.8);

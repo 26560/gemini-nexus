@@ -5,6 +5,11 @@
     const MarkdownRenderer = window.GeminiMarkdownRenderer;
     const ICONS = window.GeminiToolbarIcons;
 
+    // Simple helper
+    const isZh = navigator.language.startsWith('zh');
+    const DEFAULT_LOADING = isZh ? "Gemini 正在思考..." : "Gemini is thinking...";
+    const DEFAULT_TITLE = isZh ? "询问" : "Ask";
+
     /**
      * Sub-controller for the Ask Window
      */
@@ -45,7 +50,7 @@
             }
             
             // Reset Content
-            this.elements.windowTitle.textContent = title || "询问";
+            this.elements.windowTitle.textContent = title || DEFAULT_TITLE;
             if (contextText) {
                 this.elements.contextPreview.textContent = contextText;
                 this.elements.contextPreview.classList.remove('hidden');
@@ -67,9 +72,10 @@
             if (this.elements.askWindow) this.elements.askWindow.classList.remove('visible');
         }
 
-        showLoading(msg = "Gemini is thinking...") {
+        showLoading(msg) {
             if (!this.elements.askWindow) return;
-            this.elements.resultText.innerHTML = `<div style="color: #888; font-style: italic; margin-top: 10px;">${msg}</div>`;
+            const text = msg || DEFAULT_LOADING;
+            this.elements.resultText.innerHTML = `<div style="color: #888; font-style: italic; margin-top: 10px;">${text}</div>`;
             
             // Show Footer with Stop button
             if (this.elements.windowFooter) this.elements.windowFooter.classList.remove('hidden');

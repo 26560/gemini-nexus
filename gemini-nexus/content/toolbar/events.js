@@ -8,7 +8,7 @@
         }
 
         bind(elements, askWindow) {
-            const { buttons, imageBtn, askInput } = elements;
+            const { buttons, imageBtn, askInput, askModelSelect } = elements;
 
             // --- Toolbar Buttons ---
             this._add(buttons.copySelection, 'mousedown', (e) => this.controller.triggerAction(e, 'copy_selection'));
@@ -53,6 +53,13 @@
                     this.controller.submitAsk(e);
                 }
                 e.stopPropagation();
+            });
+
+            // --- Model Selection ---
+            this._add(askModelSelect, 'change', (e) => {
+                this.controller.handleModelChange(e.target.value);
+                const Utils = window.GeminiViewUtils;
+                if (Utils && Utils.resizeSelect) Utils.resizeSelect(e.target);
             });
 
             // Prevent event bubbling to page

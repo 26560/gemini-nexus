@@ -7,41 +7,59 @@
  */
 export function setupContextMenus(imageHandler) {
     
-    // Create Context Menus
+    // Create Context Menus with Localization check
     chrome.runtime.onInstalled.addListener(() => {
+        const isZh = chrome.i18n.getUILanguage().startsWith('zh');
+        
+        const titles = {
+            main: isZh ? "Gemini Nexus" : "Gemini Nexus",
+            pageChat: isZh ? "与当前网页对话" : "Chat with Page",
+            ocr: isZh ? "OCR (文字提取)" : "OCR (Extract Text)",
+            snip: isZh ? "区域截图 (Snip)" : "Snip (Capture Area)",
+            screenshot: isZh ? "全屏截图" : "Full Screenshot"
+        };
+
         chrome.contextMenus.create({
             id: "gemini-nexus-parent",
-            title: "Gemini Nexus",
+            title: titles.main,
             contexts: ["all"]
         });
 
         chrome.contextMenus.create({
             id: "menu-page-chat",
             parentId: "gemini-nexus-parent",
-            title: "Chat with Page",
+            title: titles.pageChat,
             contexts: ["all"]
         });
 
         chrome.contextMenus.create({
             id: "menu-ocr",
             parentId: "gemini-nexus-parent",
-            title: "OCR (Extract Text)",
+            title: titles.ocr,
             contexts: ["all"]
         });
 
         chrome.contextMenus.create({
             id: "menu-snip",
             parentId: "gemini-nexus-parent",
-            title: "Snip (Capture Area)",
+            title: titles.snip,
             contexts: ["all"]
         });
 
         chrome.contextMenus.create({
             id: "menu-screenshot",
             parentId: "gemini-nexus-parent",
-            title: "Full Screenshot",
+            title: titles.screenshot,
             contexts: ["all"]
         });
+    });
+    
+    // Also try to recreate on Startup to catch language changes if browser restarts
+    chrome.runtime.onStartup.addListener(() => {
+        // We can't check if menus exist easily without callback hell, but create wipes previous ones usually on reload
+        // Or we can rely on chrome handling this. 
+        // Best practice is usually onInstalled, but language changes might need reinstall.
+        // For now, onInstalled is standard.
     });
 
     // Handle Context Menu Clicks

@@ -1,10 +1,9 @@
 
-
-
 // sandbox/app_controller.js
-import { appendMessage } from './renderer.js';
+import { appendMessage } from './render/message.js';
 import { sendToBackground, saveSessionsToStorage } from '../lib/messaging.js';
 import { MessageHandler } from './message_handler.js';
+import { t } from './core/i18n.js';
 
 export class AppController {
     constructor(sessionManager, uiController, imageManager) {
@@ -34,7 +33,7 @@ export class AppController {
         this.ui.chat.togglePageContext(this.pageContextActive);
         
         if (this.pageContextActive) {
-            this.ui.updateStatus("Chat will include page content");
+            this.ui.updateStatus(t('pageContextEnabled'));
             setTimeout(() => { if(!this.isGenerating) this.ui.updateStatus(""); }, 2000);
         }
     }
@@ -43,7 +42,7 @@ export class AppController {
         if (this.pageContextActive !== enable) {
             this.togglePageContext();
         } else if (enable) {
-            this.ui.updateStatus("Chat with page is already active");
+            this.ui.updateStatus(t('pageContextActive'));
             setTimeout(() => { if(!this.isGenerating) this.ui.updateStatus(""); }, 2000);
         }
     }
@@ -56,6 +55,8 @@ export class AppController {
         this.messageHandler.resetStream();
 
         const s = this.sessionManager.createSession();
+        s.title = t('newChat'); 
+
         this.switchToSession(s.id);
     }
 
@@ -96,7 +97,11 @@ export class AppController {
     }
     
     getSelectedModel() {
-        return "gemini-3-flash";
+        return this.ui.modelSelect ? this.ui.modelSelect.value : "gemini-2.5-flash";
+    }
+
+    handleModelChange(model) {
+        window.parent.postMessage({ action: 'SAVE_MODEL', payload: model }, '*');
     }
 
     handleDeleteSession(sessionId) {
@@ -122,7 +127,7 @@ export class AppController {
         
         this.isGenerating = false;
         this.ui.setLoading(false);
-        this.ui.updateStatus("Cancelled.");
+        this.ui.updateStatus(t('cancelled'));
     }
 
     async handleSendMessage() {
@@ -143,7 +148,7 @@ export class AppController {
 
         // Update Title if it's the first message
         if (session.messages.length === 0) {
-            const titleUpdate = this.sessionManager.updateTitle(currentId, text || "Image sent");
+            const titleUpdate = this.sessionManager.updateTitle(currentId, text || t('imageSent'));
             if(titleUpdate) this.refreshHistoryUI();
         }
 

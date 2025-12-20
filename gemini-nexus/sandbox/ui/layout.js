@@ -1,14 +1,13 @@
+// sandbox/ui/layout.js
+import { SidebarTemplate } from './templates/sidebar.js';
+import { HeaderTemplate } from './templates/header.js';
+import { ChatTemplate } from './templates/chat.js';
+import { FooterTemplate } from './templates/footer.js';
+import { ViewerTemplate } from './templates/viewer.js';
+import { SettingsTemplate } from './templates/settings.js';
 
-import { SIDEBAR_HTML } from './templates/sidebar.js';
-import { HEADER_HTML } from './templates/header.js';
-import { FOOTER_HTML } from './templates/footer.js';
-
-export function renderAppLayout(container) {
-    const layoutHTML = `
-        ${SIDEBAR_HTML}
-        ${HEADER_HTML}
-        <div id="chat-history"></div>
-        ${FOOTER_HTML}
-    `;
-    container.innerHTML = layoutHTML;
+export function renderLayout() {
+    const LayoutTemplate = SidebarTemplate + HeaderTemplate + ChatTemplate + FooterTemplate + ViewerTemplate + SettingsTemplate;
+    const app = document.getElementById('app');
+    if (app) app.innerHTML = LayoutTemplate;
 }

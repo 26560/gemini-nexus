@@ -1,8 +1,9 @@
+
 {
   "manifest_version": 3,
   "name": "Gemini Nexus",
-  "version": "2.0.0",
-  "permissions": ["sidePanel", "storage", "contextMenus", "scripting"],
+  "version": "3.0.0",
+  "permissions": ["sidePanel", "storage", "contextMenus", "scripting", "alarms"],
   "host_permissions": [
     "https://gemini.google.com/*",
     "<all_urls>"
@@ -62,6 +63,9 @@
         "content/toolbar/actions.js",
         "content/toolbar/image.js",
         "content/toolbar/stream.js", 
+        "content/toolbar/input.js",
+        "content/toolbar/selection.js",
+        "content/toolbar/controller.js",
         "content/toolbar/index.js", 
         "content/index.js"
       ],

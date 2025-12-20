@@ -38,11 +38,44 @@
     padding: 12px 20px; 
     border-radius: 24px; 
     max-width: 85%; 
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
+    overflow: visible; /* Allow copy button to float outside */
 }
 
+/* User Copy Button - Floating on Hover */
 .msg.user .copy-btn {
-    display: none; 
+    display: flex;
+    position: absolute;
+    left: -38px;
+    bottom: 2px;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.msg.user:hover .copy-btn {
+    opacity: 1;
+}
+
+.msg.user .copy-btn:hover {
+    background: var(--btn-hover);
+    color: var(--primary);
+    transform: scale(1.1);
+    border-color: var(--primary);
+}
+
+.msg.user .copy-btn svg {
+    width: 14px;
+    height: 14px;
 }
 
 /* --- AI Message (Clean Text) --- */

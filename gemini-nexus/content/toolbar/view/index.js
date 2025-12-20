@@ -14,6 +14,12 @@
             // Initialize Sub-Views
             this.widgetView = new window.GeminiViewWidget(this.elements);
             this.windowView = new window.GeminiViewWindow(this.elements);
+            
+            // Initial resize of model select if exists
+            const Utils = window.GeminiViewUtils;
+            if (this.elements.askModelSelect && Utils && Utils.resizeSelect) {
+                Utils.resizeSelect(this.elements.askModelSelect);
+            }
         }
 
         cacheElements() {
@@ -30,6 +36,7 @@
                 askInput: get('ask-input'),
                 resultArea: get('result-area'),
                 resultText: get('result-text'),
+                askModelSelect: get('ask-model-select'),
                 
                 // Footer Elements
                 windowFooter: get('window-footer'),
@@ -81,6 +88,20 @@
 
         dockWindow(side, top) { this.windowView.dockWindow(side, top); }
         undockWindow() { this.windowView.undockWindow(); }
+
+        // --- Model Selection ---
+        
+        getSelectedModel() {
+            return this.elements.askModelSelect ? this.elements.askModelSelect.value : "gemini-2.5-flash";
+        }
+
+        setSelectedModel(model) {
+            const Utils = window.GeminiViewUtils;
+            if (this.elements.askModelSelect && model) {
+                this.elements.askModelSelect.value = model;
+                if(Utils && Utils.resizeSelect) Utils.resizeSelect(this.elements.askModelSelect);
+            }
+        }
 
         // --- General ---
 
