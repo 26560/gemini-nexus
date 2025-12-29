@@ -4,8 +4,9 @@ import { getActiveTabContent } from '../utils.js';
 import { BROWSER_CONTROL_PREAMBLE } from './preamble.js';
 
 export class PromptBuilder {
-    constructor(controlManager) {
+    constructor(controlManager, mcpManager) {
         this.controlManager = controlManager;
+        this.mcpManager = mcpManager;
     }
 
     async build(request) {
@@ -60,6 +61,29 @@ export class PromptBuilder {
                 } catch (e) {
                     console.warn("Auto-Injection failed:", e);
                 }
+            }
+        }
+
+        // --- External MCP Tools (Remote Servers) ---
+        // Only inject when enabled in request (passed from UI settings).
+        if (request.enableMcpTools) {
+            // If browser control is NOT enabled, we still need to teach the model the tool-call format.
+            if (!request.enableBrowserControl) {
+                systemPreamble += `[System: Tooling Enabled]\n`;
+                systemPreamble += `You may call tools when helpful.\n\n`;
+                systemPreamble += `**Output Format:**\n`;
+                systemPreamble += `To use a tool, output a **single** JSON block at the end of your response:\n`;
+                systemPreamble += `\`\`\`json\n{ "tool": "tool_name", "args": { ... } }\n\`\`\`\n\n`;
+            }
+
+            if (this.mcpManager) {
+                try {
+                    systemPreamble += await this.mcpManager.buildToolsPreamble(request);
+                } catch (e) {
+                    systemPreamble += `[External MCP Tools Error]: ${e.message}\n\n`;
+                }
+            } else {
+                systemPreamble += `[External MCP Tools Error]: MCP manager not available.\n\n`;
             }
         }
 

@@ -8,11 +8,11 @@ import { ToolExecutor } from './prompt/tool_executor.js';
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export class PromptHandler {
-    constructor(sessionManager, controlManager) {
+    constructor(sessionManager, controlManager, mcpManager) {
         this.sessionManager = sessionManager;
         this.controlManager = controlManager;
-        this.builder = new PromptBuilder(controlManager);
-        this.toolExecutor = new ToolExecutor(controlManager);
+        this.builder = new PromptBuilder(controlManager, mcpManager);
+        this.toolExecutor = new ToolExecutor(controlManager, mcpManager);
         this.isCancelled = false;
     }
 
@@ -102,8 +102,8 @@ export class PromptHandler {
 
                     // 4. Process Tool Execution (if any)
                     let toolResult = null;
-                    if (request.enableBrowserControl) {
-                        toolResult = await this.toolExecutor.executeIfPresent(result.text, onUpdate);
+                    if (request.enableBrowserControl || request.enableMcpTools) {
+                        toolResult = await this.toolExecutor.executeIfPresent(result.text, request, onUpdate);
                     }
 
                     if (this.isCancelled) break;
@@ -130,7 +130,7 @@ export class PromptHandler {
                             'list_pages'
                         ];
                         
-                        if (request.enableBrowserControl && this.controlManager && !skipSnapshotTools.includes(toolResult.toolName)) {
+                        if (toolResult.source === 'browser_control' && request.enableBrowserControl && this.controlManager && !skipSnapshotTools.includes(toolResult.toolName)) {
                              try {
                                  // Inject current URL and Accessibility Tree
                                  const targetTabId = this.controlManager.getTargetTabId();

@@ -14,6 +14,18 @@ Gemini Nexus integrates Google's Gemini models directly into your browsing exper
 *   **Content Scripts**: Floating toolbar and page interaction (`content/`).
 *   **Background**: Service worker handling API calls and session management (`background/`).
 
+## External MCP Tools (Remote Servers)
+
+Gemini Nexus can optionally connect to an external MCP server (via **SSE** or **WebSocket**) and execute its tools inside the existing tool loop.
+
+1. Start an MCP server/proxy endpoint (example from MCP SuperAssistant proxy: `http://localhost:3006/sse`).
+2. In **Settings → Connection → External MCP Tools**, enable it and set the Server URL.
+3. Ask normally; if the model needs a tool it will output a JSON tool block like:
+
+```json
+{ "tool": "tool_name", "args": { "key": "value" } }
+```
+
 ## Run Locally
 
 **Prerequisites:** Node.js

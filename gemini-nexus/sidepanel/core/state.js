@@ -28,7 +28,10 @@ export class StateManager {
             'geminiProvider',
             'geminiOpenaiBaseUrl',
             'geminiOpenaiApiKey',
-            'geminiOpenaiModel'
+            'geminiOpenaiModel',
+            'geminiMcpEnabled',
+            'geminiMcpTransport',
+            'geminiMcpServerUrl'
         ], (result) => {
             this.data = result;
             this.trySendInitData();
@@ -73,7 +76,11 @@ export class StateManager {
                 thinkingLevel: this.data.geminiThinkingLevel || "low",
                 openaiBaseUrl: this.data.geminiOpenaiBaseUrl || "",
                 openaiApiKey: this.data.geminiOpenaiApiKey || "",
-                openaiModel: this.data.geminiOpenaiModel || ""
+                openaiModel: this.data.geminiOpenaiModel || "",
+                // MCP
+                mcpEnabled: this.data.geminiMcpEnabled === true,
+                mcpTransport: this.data.geminiMcpTransport || "sse",
+                mcpServerUrl: this.data.geminiMcpServerUrl || "http://localhost:3006/sse"
             } 
         });
 

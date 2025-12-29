@@ -46,4 +46,31 @@ export const ConnectionSettingsTemplate = `
             </div>
         </div>
     </div>
+
+    <div style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.03); border-radius: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div>
+                <label data-i18n="mcpTools" style="font-weight: 500; display: block; margin-bottom: 2px;">External MCP Tools</label>
+                <div data-i18n="mcpToolsDesc" style="font-size: 12px; opacity: 0.85;">Connect to a local/remote MCP server and use its tools in chat.</div>
+            </div>
+            <label style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="mcp-enabled" />
+                <span data-i18n="enabled">Enabled</span>
+            </label>
+        </div>
+
+        <div id="mcp-fields" style="display: none; flex-direction: column; gap: 12px; margin-top: 12px;">
+            <div>
+                <label data-i18n="mcpTransport" style="font-weight: 500; display: block; margin-bottom: 2px;">Transport</label>
+                <select id="mcp-transport" class="shortcut-input" style="width: 100%; text-align: left; padding: 6px 12px;">
+                    <option value="sse">SSE (http://.../sse)</option>
+                    <option value="ws">WebSocket (ws://)</option>
+                </select>
+            </div>
+            <div>
+                <label data-i18n="mcpServerUrl" style="font-weight: 500; display: block; margin-bottom: 2px;">Server URL</label>
+                <input type="text" id="mcp-server-url" class="shortcut-input" style="width: 100%; text-align: left; box-sizing: border-box;" placeholder="http://localhost:3006/sse">
+            </div>
+        </div>
+    </div>
 </div>`;

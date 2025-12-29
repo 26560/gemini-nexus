@@ -97,7 +97,10 @@ export class MessageBridge {
                 'geminiThinkingLevel',
                 'geminiOpenaiBaseUrl',
                 'geminiOpenaiApiKey',
-                'geminiOpenaiModel'
+                'geminiOpenaiModel',
+                'geminiMcpEnabled',
+                'geminiMcpTransport',
+                'geminiMcpServerUrl'
             ], (res) => {
                 this.frame.postMessage({ 
                     action: 'RESTORE_CONNECTION_SETTINGS', 
@@ -108,7 +111,11 @@ export class MessageBridge {
                         thinkingLevel: res.geminiThinkingLevel || "low",
                         openaiBaseUrl: res.geminiOpenaiBaseUrl || "",
                         openaiApiKey: res.geminiOpenaiApiKey || "",
-                        openaiModel: res.geminiOpenaiModel || ""
+                        openaiModel: res.geminiOpenaiModel || "",
+                        // MCP
+                        mcpEnabled: res.geminiMcpEnabled === true,
+                        mcpTransport: res.geminiMcpTransport || "sse",
+                        mcpServerUrl: res.geminiMcpServerUrl || "http://localhost:3006/sse"
                     } 
                 });
             });
@@ -135,6 +142,10 @@ export class MessageBridge {
             this.state.save('geminiOpenaiBaseUrl', payload.openaiBaseUrl);
             this.state.save('geminiOpenaiApiKey', payload.openaiApiKey);
             this.state.save('geminiOpenaiModel', payload.openaiModel);
+            // MCP
+            this.state.save('geminiMcpEnabled', payload.mcpEnabled === true);
+            this.state.save('geminiMcpTransport', payload.mcpTransport || "sse");
+            this.state.save('geminiMcpServerUrl', payload.mcpServerUrl || "");
         }
     }
 

@@ -24,6 +24,12 @@ export class ConnectionSection {
             openaiBaseUrl: get('openai-base-url'),
             openaiApiKey: get('openai-api-key'),
             openaiModel: get('openai-model'),
+
+            // MCP Fields
+            mcpEnabled: get('mcp-enabled'),
+            mcpFields: get('mcp-fields'),
+            mcpTransport: get('mcp-transport'),
+            mcpServerUrl: get('mcp-server-url'),
         };
     }
 
@@ -34,12 +40,20 @@ export class ConnectionSection {
                 this.updateVisibility(e.target.value);
             });
         }
+
+        const { mcpEnabled } = this.elements;
+        if (mcpEnabled) {
+            mcpEnabled.addEventListener('change', (e) => {
+                this.updateMcpVisibility(e.target.checked === true);
+            });
+        }
     }
 
     setData(data) {
         const { 
             providerSelect, apiKeyInput, thinkingLevelSelect, 
-            openaiBaseUrl, openaiApiKey, openaiModel 
+            openaiBaseUrl, openaiApiKey, openaiModel,
+            mcpEnabled, mcpTransport, mcpServerUrl
         } = this.elements;
 
         // Provider
@@ -56,12 +70,21 @@ export class ConnectionSection {
         if (openaiBaseUrl) openaiBaseUrl.value = data.openaiBaseUrl || "";
         if (openaiApiKey) openaiApiKey.value = data.openaiApiKey || "";
         if (openaiModel) openaiModel.value = data.openaiModel || "";
+
+        // MCP
+        if (mcpEnabled) {
+            mcpEnabled.checked = data.mcpEnabled === true;
+            this.updateMcpVisibility(mcpEnabled.checked);
+        }
+        if (mcpTransport) mcpTransport.value = data.mcpTransport || "sse";
+        if (mcpServerUrl) mcpServerUrl.value = data.mcpServerUrl || "http://localhost:3006/sse";
     }
 
     getData() {
         const { 
             providerSelect, apiKeyInput, thinkingLevelSelect, 
-            openaiBaseUrl, openaiApiKey, openaiModel 
+            openaiBaseUrl, openaiApiKey, openaiModel,
+            mcpEnabled, mcpTransport, mcpServerUrl
         } = this.elements;
 
         return {
@@ -72,7 +95,12 @@ export class ConnectionSection {
             // OpenAI
             openaiBaseUrl: openaiBaseUrl ? openaiBaseUrl.value.trim() : "",
             openaiApiKey: openaiApiKey ? openaiApiKey.value.trim() : "",
-            openaiModel: openaiModel ? openaiModel.value.trim() : ""
+            openaiModel: openaiModel ? openaiModel.value.trim() : "",
+
+            // MCP
+            mcpEnabled: mcpEnabled ? mcpEnabled.checked === true : false,
+            mcpTransport: mcpTransport ? mcpTransport.value : "sse",
+            mcpServerUrl: mcpServerUrl ? mcpServerUrl.value.trim() : ""
         };
     }
 
@@ -92,5 +120,11 @@ export class ConnectionSection {
                 if (openaiFields) openaiFields.style.display = 'flex';
             }
         }
+    }
+
+    updateMcpVisibility(enabled) {
+        const { mcpFields } = this.elements;
+        if (!mcpFields) return;
+        mcpFields.style.display = enabled ? 'flex' : 'none';
     }
 }

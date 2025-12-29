@@ -6,6 +6,54 @@
  * Decouples logic from the main ControlManager.
  */
 export class ToolDispatcher {
+    static LOCAL_TOOL_NAMES = new Set([
+        // Navigation
+        'navigate_page',
+        'new_page',
+        'close_page',
+        'list_pages',
+        'select_page',
+
+        // Interaction
+        'click',
+        'drag_element',
+        'hover',
+        'fill',
+        'fill_form',
+        'press_key',
+        'handle_dialog',
+        'attach_file',
+
+        // Observation & Logic
+        'take_screenshot',
+        'take_snapshot',
+        'wait_for',
+        'evaluate_script',
+        'run_javascript',
+        'run_script',
+
+        // Emulation
+        'emulate',
+        'resize_page',
+
+        // Performance
+        'performance_start_trace',
+        'start_trace',
+        'performance_stop_trace',
+        'stop_trace',
+        'performance_analyze_insight',
+
+        // Observability / Network
+        'get_logs',
+        'get_network_activity',
+        'list_network_requests',
+        'get_network_request',
+    ]);
+
+    static isLocalTool(name) {
+        return ToolDispatcher.LOCAL_TOOL_NAMES.has(name);
+    }
+
     constructor(actions, snapshotManager) {
         this.actions = actions;
         this.snapshotManager = snapshotManager;

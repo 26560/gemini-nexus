@@ -66,6 +66,9 @@ export class PromptController {
         this.app.isGenerating = true;
         this.ui.setLoading(true);
 
+        const conn = (this.ui && this.ui.settings && this.ui.settings.connectionData) ? this.ui.settings.connectionData : {};
+        const enableMcpTools = conn.mcpEnabled === true && !!(conn.mcpServerUrl && conn.mcpServerUrl.trim());
+
         sendToBackground({ 
             action: "SEND_PROMPT", 
             text: text,
@@ -73,6 +76,9 @@ export class PromptController {
             model: selectedModel,
             includePageContext: this.app.pageContextActive,
             enableBrowserControl: this.app.browserControlActive, // Pass browser control state
+            enableMcpTools: enableMcpTools,
+            mcpTransport: conn.mcpTransport || "sse",
+            mcpServerUrl: conn.mcpServerUrl || "",
             sessionId: currentId // Important: Pass session ID so background can save history independently
         });
     }

@@ -25,7 +25,11 @@ export class SettingsController {
             thinkingLevel: "low",
             openaiBaseUrl: "",
             openaiApiKey: "",
-            openaiModel: ""
+            openaiModel: "",
+            // MCP (External Tools)
+            mcpEnabled: false,
+            mcpTransport: "sse",
+            mcpServerUrl: "http://localhost:3006/sse"
         };
 
         // Initialize View
@@ -111,7 +115,11 @@ export class SettingsController {
             thinkingLevel: data.connection.thinkingLevel,
             openaiBaseUrl: data.connection.openaiBaseUrl,
             openaiApiKey: data.connection.openaiApiKey,
-            openaiModel: data.connection.openaiModel
+            openaiModel: data.connection.openaiModel,
+            // MCP
+            mcpEnabled: data.connection.mcpEnabled === true,
+            mcpTransport: data.connection.mcpTransport || "sse",
+            mcpServerUrl: data.connection.mcpServerUrl || ""
         };
         
         saveConnectionSettingsToStorage(this.connectionData);
